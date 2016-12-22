@@ -1,10 +1,6 @@
 casper.test.begin('Test for buy', function suite(test) {
 	casper.start(siteConfig.siteURL, function() {
-		//this.echo('Page: ' + this.getTitle());
-		this.wait(5000, function() {
-			this.echo('Page: ' + this.getTitle() + siteConfig.siteURL);
-			test.assertExists('#block-terracotta-terracotta-bestsellers');
-		});
+		test.assertExists('#block-terracotta-terracotta-bestsellers');
 	});
 
 	casper.thenOpen (siteConfig.flowerStandsURL, function() {

@@ -1,9 +1,5 @@
-exports.siteURL = 'http://127.0.0.1:8000/';
-exports.flowerStandsURL = 'http://localhost:8000/kategoria/viragtartok/';
-exports.clayPotsURL = 'http://localhost:8000/agyagcserep/';
+var baseURL = 'http://localhost:8000/'; // http://www.eterracotta.hu/';
 
-// exports.siteURL = 'http://www.eterracotta.hu/';
-// exports.flowerStandsURL = 'http://www.eterracotta.hu/kategoria/viragtartok/';
-// exports.clayPotsURL = 'http://www.eterracotta.hu/agyagcserep/';
-
-
+exports.siteURL = baseURL;
+exports.flowerStandsURL = baseURL + 'kategoria/viragtartok/';
+exports.clayPotsURL = baseURL + 'agyagcserep/';
