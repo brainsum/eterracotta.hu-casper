@@ -1,6 +1,6 @@
 casper.test.begin('Test for buy', function suite(test) {
 	casper.start(siteConfig.siteURL, function() {
-		test.assertExists('#block-terracotta-terracotta-bestsellers');
+        test.assertExists('#block-terracotta-terracotta-bestsellers');
 	});
 
 	casper.thenOpen (siteConfig.flowerStandsURL, function() {
