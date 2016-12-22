@@ -1,6 +1,10 @@
 casper.test.begin('Test for buy', function suite(test) {
 	casper.start(siteConfig.siteURL, function() {
-		test.assertExists('#block-terracotta-terracotta-bestsellers');
+		//this.echo('Page: ' + this.getTitle());
+		this.wait(5000, function() {
+			this.echo('Page: ' + this.getTitle() + siteConfig.siteURL);
+			test.assertExists('#block-terracotta-terracotta-bestsellers');
+		});
 	});
 
 	casper.thenOpen (siteConfig.flowerStandsURL, function() {
@@ -21,7 +25,8 @@ casper.test.begin('Test for buy', function suite(test) {
 
 	casper.then(function() {
 		test.assertExists('#main-content');
-		//test.assertExists('.alert-block');
+		//test.assertExists('#main-content .alert-block');
+		test.assertExists('#main-content .alert-block > h4.element-invisible');
 		//test.assertExists('.alert.alert-block.alert-success.messages.status');
 		//test.assertTextExists('bekerült a', 'The selected item gone to the shopping cart.');
 	});
