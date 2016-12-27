@@ -1,4 +1,5 @@
 var siteConfig = require('../site.config.js');
+var casperSettings = require('../casper-settings.js');
 
 console.log(siteConfig.siteURL);
 
@@ -11,6 +12,7 @@ casper.echo("I'm the pre. " + siteConfig.flowerStandsURL);
 // casper.on('http.status.200', function(resource) {
 //     this.log('Hey, this one is 200: ' + resource.url, 'warning');
 // });
+casperSettings.InitializeCustomFunctions();
 casper.test.done();
 
 
