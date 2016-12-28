@@ -3,7 +3,8 @@ var casperSettings = require('../casper-settings.js');
 
 console.log(siteConfig.siteURL);
 
-casper.echo("I'm the pre. " + siteConfig.flowerStandsURL);
+// casper.echo("I'm the pre.");
+
 // casper.options.verbose = true;
 // casper.options.logLevel = "debug";
 // casper.on('http.status.404', function(resource) {
