@@ -5,7 +5,7 @@ casper.test.begin('Test for buy', function suite(test) {
 	});
 
 	casper.thenOpen (siteConfig.flowerStandsURL, function() {
-		this.echo('Page: ' + this.getTitle() + siteConfig.flowerStandsURL);
+		this.echo('Page: ' + this.getTitle() + ' ' + siteConfig.flowerStandsURL);
 		casper.myCapture('flowerStands-page');
 		casper.echo(casper.getCurrentUrl());
 		test.assertExists('h1.page-header');
@@ -13,7 +13,7 @@ casper.test.begin('Test for buy', function suite(test) {
 	});
 
 	casper.thenOpen (siteConfig.clayPotsURL, function() {
-		this.echo('Page: ' + this.getTitle() + siteConfig.clayPotsURL);
+		this.echo('Page: ' + this.getTitle() + ' ' + siteConfig.clayPotsURL);
 		casper.myCapture('clayPots-page');
 		test.assertExists('h1.page-title');
 		test.assertSelectorHasText('h1.page-title', 'Agyagcserép');
@@ -46,12 +46,47 @@ casper.test.begin('Test for buy', function suite(test) {
 	});
 
 	casper.waitFor(function check() {
-		//return this.getCurrentUrl() != siteConfig.checkoutURL;
+		// return this.getCurrentUrl() != siteConfig.checkoutURL;
 		var currURL = this.getCurrentUrl();
-		return currURL.startsWith(siteConfig.checkoutURL) != true;
+		// return currURL.startsWith(siteConfig.checkoutURL) != true;
+		return this.getCurrentUrl() == currURL;
 	}, function then() {
 		casper.echo(this.getCurrentUrl());
 		casper.myCapture('Checkout-page');
+	});
+
+	casper.then(function () {
+		test.assertExists('#commerce-checkout-form-checkout');
+		
+		this.fill('form#commerce-checkout-form-checkout', {
+			'account[login][mail]': 'test@yahoo.com',
+			'commerce_payment[payment_method]': 'commerce_cod|commerce_payment_commerce_cod',
+			'customer_profile_shipping[commerce_customer_address][und][0][name_line]': 'Test Pers',
+			'customer_profile_shipping[commerce_customer_address][und][0][country]': 'Románia',
+			'customer_profile_shipping[commerce_customer_address][und][0][postal_code]': '4000',
+			'customer_profile_shipping[commerce_customer_address][und][0][locality]': 'Sepsiszentgyörgy',
+			'customer_profile_shipping[commerce_customer_address][und][0][thoroughfare]': 'Grigore Bălan',
+			'customer_profile_shipping[commerce_customer_address][und][0][phone_number]': '0757000999'
+			
+			
+		});
+		casper.myCapture('Filled-Checkout-page');
+	});
+
+	casper.then(function() {
+		casper.myCapture('Filled-Checkout-page1');
+		test.assertTextExists('Folytatás a következő lépéssel', 'Gomb');
+		this.clickLabel('Folytatás a következő lépéssel', 'button');
+	});
+
+	casper.waitFor(function check() {
+		var currURL = this.getCurrentUrl();
+		// casper.echo('Url curr: ' + currURL);
+		// casper.echo('Url-this: ' + this.getCurrentUrl());
+		return this.getCurrentUrl() == currURL;
+	}, function then() {
+		casper.echo(this.getCurrentUrl());
+		casper.myCapture('Checkout-Review-page');
 	});
 
 	casper.run(function() {
