@@ -37,7 +37,7 @@ casper.test.begin('Test for buy', function suite(test) {
 	casper.waitFor(function check() {
 		return this.getCurrentUrl() != siteConfig.cartURL;
 	}, function then() {
-		casper.echo(this.getCurrentUrl());
+		casper.echo('\n' + 'cartUrl: ' + this.getCurrentUrl());
 		casper.myCapture('Cart-page');
 	});
 
@@ -51,22 +51,21 @@ casper.test.begin('Test for buy', function suite(test) {
 		// return currURL.startsWith(siteConfig.checkoutURL) != true;
 		return this.getCurrentUrl() == currURL;
 	}, function then() {
-		casper.echo(this.getCurrentUrl());
+		casper.echo('\n' + 'checkout Url: ' + this.getCurrentUrl());
 		casper.myCapture('Checkout-page');
 	});
 
-	casper.then(function () {
-		test.assertExists('#commerce-checkout-form-checkout');
-		
+	casper.then(function() {
+		test.assertExists('#commerce-checkout-form-checkout');		
 		this.fill('form#commerce-checkout-form-checkout', {
 			'account[login][mail]': 'test@yahoo.com',
-			'commerce_payment[payment_method]': 'commerce_cod|commerce_payment_commerce_cod',
 			'customer_profile_shipping[commerce_customer_address][und][0][name_line]': 'Test Pers',
 			'customer_profile_shipping[commerce_customer_address][und][0][country]': 'Románia',
 			'customer_profile_shipping[commerce_customer_address][und][0][postal_code]': '4000',
 			'customer_profile_shipping[commerce_customer_address][und][0][locality]': 'Sepsiszentgyörgy',
 			'customer_profile_shipping[commerce_customer_address][und][0][thoroughfare]': 'Grigore Bălan',
-			'customer_profile_shipping[commerce_customer_address][und][0][phone_number]': '0757000999'
+			'customer_profile_shipping[commerce_customer_address][und][0][phone_number]': '0757000999',
+			'commerce_payment[payment_method]': 'commerce_cod|commerce_payment_commerce_cod'
 			
 			
 		});
@@ -80,13 +79,26 @@ casper.test.begin('Test for buy', function suite(test) {
 	});
 
 	casper.waitFor(function check() {
-		var currURL = this.getCurrentUrl();
-		// casper.echo('Url curr: ' + currURL);
-		// casper.echo('Url-this: ' + this.getCurrentUrl());
-		return this.getCurrentUrl() == currURL;
+		var currURL = this.getCurrentUrl() + '/review';
+		//casper.echo('Url curr: ' + currURL);
+		//casper.echo('Url-this: ' + this.getCurrentUrl());
+		return this.getCurrentUrl() != currURL;
 	}, function then() {
-		casper.echo(this.getCurrentUrl());
+		casper.echo('\n' + 'checkout-review Url: ' + this.getCurrentUrl());
 		casper.myCapture('Checkout-Review-page');
+	}, function timeout() { 
+		// step to execute if check has failed
+    		this.echo("I can't take my screenshot.").exit();
+	}, 20000
+	);
+
+	casper.then(function() {
+		this.clickLabel('Folytatás a következő lépéssel', 'button');		
+	});
+
+	casper.then(function() {
+		casper.echo('\n' + 'checkout-complete Url: ' + this.getCurrentUrl());
+		casper.myCapture('Checkout-Complete-page');
 	});
 
 	casper.run(function() {
