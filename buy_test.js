@@ -80,8 +80,8 @@ casper.test.begin('Test for buy', function suite(test) {
 
 	casper.waitFor(function check() {
 		var currURL = this.getCurrentUrl() + '/review';
-		//casper.echo('Url curr: ' + currURL);
-		//casper.echo('Url-this: ' + this.getCurrentUrl());
+		casper.echo('Url curr: ' + currURL);
+		casper.echo('Url-this: ' + this.getCurrentUrl());
 		return this.getCurrentUrl() != currURL;
 	}, function then() {
 		casper.echo('\n' + 'checkout-review Url: ' + this.getCurrentUrl());
