@@ -1,5 +1,5 @@
-var siteConfig = require('../site.config.js');
-var casperSettings = require('../casper-settings.js');
+var siteConfig = require('../configs/site.config.js');
+var casperSettings = require('../configs/casper-settings.js');
 
 console.log(siteConfig.siteURL);
 
@@ -15,5 +15,3 @@ console.log(siteConfig.siteURL);
 // });
 casperSettings.InitializeCustomFunctions();
 casper.test.done();
-
-
