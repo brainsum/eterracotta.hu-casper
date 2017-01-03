@@ -34,18 +34,60 @@ casper.test.begin('Test for buy', function suite(test) {
         casper.clickLabel('Kosár megtekintése', 'a');
     });
 
-    casper.waitFor(function check() {
+    casper.then(function() {
+        casper.echo('Page: ' + casper.getTitle());
+        casper.myCapture('Cart-page');
+        test.assertExists('h1.page-header');
+        test.assertSelectorHasText('h1.page-header', 'Kosár');
+    });
+
+    /*casper.waitForSelector('#cart-popup', function() {
+        test.assertExists('.line-item-summary-view-cart.first');
+        casper.clickLabel('Kosár megtekintése', 'a');
+        casper.echo('url: ' + casper.getCurrentUrl());
+        casper.waitForUrl(siteConfig.cartURL, function then() {
+            casper.echo('\n' + 'cartUrl: ' + casper.getCurrentUrl());
+            casper.myCapture('Cart-page');
+        }, function timeout() { 
+            // step to execute if check has failed
+            casper.echo(siteConfig.cartURL);
+            casper.echo('url: ' + casper.getCurrentUrl());
+            casper.echo("I can't take my screenshot.").exit();
+        }//, 20000
+        );
+    })*/
+
+    /*
+    casper.waitForUrl(siteConfig.cartURL, function then() {
+        casper.echo('\n' + 'cartUrl: ' + casper.getCurrentUrl());
+        casper.myCapture('Cart-page');
+    }, function timeout() { 
+        // step to execute if check has failed
+        casper.echo(siteConfig.cartURL);
+        casper.echo('url' + casper.getCurrentUrl());
+        casper.echo("I can't take my screenshot.").exit();
+    }//, 20000
+    );*/
+
+    /*casper.waitFor(function check() {
         return casper.getCurrentUrl() != siteConfig.cartURL;
     }, function then() {
         casper.echo('\n' + 'cartUrl: ' + casper.getCurrentUrl());
         casper.myCapture('Cart-page');
-    });
+    });*/
 
     casper.then(function() {
         casper.clickLabel('Fizetés', 'button');
     });
 
-    casper.waitFor(function check() {
+    casper.waitForSelector('#edit-cart-contents', function() {
+        test.assertExists('.panel-heading');
+        test.assertSelectorHasText('.panel-title.fieldset-legend', 'Kosár tartalma');
+        casper.echo('\n' + 'checkout Url: ' + casper.getCurrentUrl());
+        casper.myCapture('Checkout-page');
+    });
+
+    /*casper.waitFor(function check() {
         // return casper.getCurrentUrl() != siteConfig.checkoutURL;
         var currURL = casper.getCurrentUrl();
         // return currURL.startsWith(siteConfig.checkoutURL) != true;
@@ -53,7 +95,7 @@ casper.test.begin('Test for buy', function suite(test) {
     }, function then() {
         casper.echo('\n' + 'checkout Url: ' + casper.getCurrentUrl());
         casper.myCapture('Checkout-page');
-    });
+    });*/
 
     casper.then(function() {
         test.assertExists('#commerce-checkout-form-checkout');
@@ -65,6 +107,7 @@ casper.test.begin('Test for buy', function suite(test) {
             'customer_profile_shipping[commerce_customer_address][und][0][locality]': 'Sepsiszentgyörgy',
             'customer_profile_shipping[commerce_customer_address][und][0][thoroughfare]': 'Grigore Bălan',
             'customer_profile_shipping[commerce_customer_address][und][0][phone_number]': '0757000999',
+            'commerce_fieldgroup_pane__group_remark[field_remark][und][0][value]': 'Ez csak egy teszt rendelés!',
             'commerce_payment[payment_method]': 'commerce_cod|commerce_payment_commerce_cod'
         });
         casper.myCapture('Filled-Checkout-page');
