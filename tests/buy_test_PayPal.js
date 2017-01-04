@@ -64,7 +64,8 @@ casper.test.begin('Test for buy', function suite(test) {
             'customer_profile_shipping[commerce_customer_address][und][0][thoroughfare]': 'Grigore Bălan',
             'customer_profile_shipping[commerce_customer_address][und][0][phone_number]': '0757000999',
             'commerce_fieldgroup_pane__group_remark[field_remark][und][0][value]': 'Ez csak egy teszt rendelés!',
-            'commerce_payment[payment_method]': 'commerce_cod|commerce_payment_commerce_cod'
+            //'commerce_payment[payment_method]': 'commerce_cod|commerce_payment_commerce_cod'
+            'commerce_payment[payment_method]': 'paypal_ec|commerce_payment_paypal_ec'
         });
         casper.myCapture('filled-checkout-page');
     });
@@ -87,11 +88,43 @@ casper.test.begin('Test for buy', function suite(test) {
         casper.myCapture('checkout-review-button_click-page');
     });
 
-    casper.waitForSelector('.checkout-completion-message', function then() {
+    casper.waitForSelector('.merchantName.ng-binding.ng-scope',
+        function then() {
+            test.assertExists('h1.alpha.ng-binding');
+            //test.assertSelectorHasText('h1.alpha.ng-binding', 'PayPal Guest Checkout');
+            casper.echo('\n' + 'PayPal-Url: ' + casper.getCurrentUrl());
+            casper.myCapture('payPal-page');
+        }, 
+        function timeout() {
+            casper.echo("I can't take my screenshot - timeout.").exit();
+        },
+        55000
+    );
+
+    casper.then( function() {
+        casper.clickLabel('Log In', 'a');
+        casper.myCapture('payPal-button_click-page');
+    });
+
+    casper.waitForSelector('#email',
+        function then() {
+            casper.myCapture('payPal-login-page');
+            casper.echo('\n' + 'PayPal-Login-Url: ' + casper.getCurrentUrl());
+            //test.assertSelectorHasText('h1.alpha.ng-binding', 'Pay with PayPal');
+            casper.echo('\n' + 'PayPal-Login-Url: ' + casper.getCurrentUrl());
+            casper.myCapture('payPal-login-page'); 
+        },
+        function timeout() {
+            casper.echo("I can't take my screenshot - timeout.").exit();
+        },
+        55000
+    );
+
+    /*casper.waitForSelector('.checkout-completion-message', function then() {
         test.assertSelectorHasText('h1.page-header', 'A rendelési eljárás befejeződött');
         // casper.echo('\n' + 'checkout-complete Url: ' + casper.getCurrentUrl());
         casper.myCapture('checkout-complete-page');
-    });
+    });*/
 
     casper.run(function() {
         casper.test.done();

@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-casperjs test tests/ \
+casperjs test tests/buy_test_PayPal.js \
     --pre=pre.js \
     --ignore-ssl-errors=true \
     --ssl-protocol=any \
