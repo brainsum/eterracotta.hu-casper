@@ -1,3 +1,4 @@
+var fs = require('fs');
 var scrId = 0;
 
 var addZerosToNumber = function(currId) {
@@ -34,4 +35,14 @@ exports.InitializeCustomFunctions = function() {
 
         casper.capture(picName);
     };
+};
+
+exports.clearScreenshots = function() {
+    if(fs.isDirectory('screenshots/pages')) {
+        fs.removeTree('screenshots/pages');
+    }
+
+    if(fs.isDirectory('screenshots/errors')) {
+        fs.removeTree('screenshots/errors');
+    }
 };
