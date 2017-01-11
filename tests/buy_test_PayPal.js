@@ -1,18 +1,7 @@
 var fs = require('fs');
 
 casper.test.begin('Test for buy', function suite(test) {
-    /*casper.start();
-    //casper.clear();
-    phantom.clearCookies();
-    //phantom.page.clearMemoryCache();
-    casper.thenOpen(siteConfig.siteURL, function() {
-        test.assertExists('#block-terracotta-terracotta-bestsellers');
-        casper.myCapture('front-page');
-    });*/
-
     casper.start(siteConfig.siteURL, function() {
-        //phantom.clearCookies();
-        //casper.clear();
         test.assertExists('#block-terracotta-terracotta-bestsellers');
         casper.myCapture('front-page');
     });
@@ -160,23 +149,23 @@ casper.test.begin('Test for buy', function suite(test) {
             isFirst = 1;
         },
         function onWaitTimeout() {
-            //casper.echo("I can't take my screenshot - timeout.", 'TRACE').exit();
-            casper.myCapture('payPal-btnLogin_click-page');
+            // casper.echo("I can't take my screenshot - timeout.", 'TRACE').exit();
+            casper.myCapture('second-payPal-btnLogin_click-page');
         },
         30000
     );
 
     if (isFirst === 1) {
         casper.then(function() {
-            //fs.write('casperlogs/logfile.html', casper.getHTML(), 'w');
+            // fs.write('casperlogs/logfile.html', casper.getHTML(), 'w');
             test.assertExists('#loadLogin');
             casper.click('#loadLogin');
         });
         
         casper.waitForSelector('#submitLogin',
             function then() {
-                casper.echo('\n' + 'PayPal-Login2-Url: ' + casper.getCurrentUrl(), 'TRACE');
-                //casper.wait(1000);
+                // casper.echo('\n' + 'PayPal-Login2-Url: ' + casper.getCurrentUrl(), 'TRACE');
+                // casper.wait(1000);
                 casper.myCapture('payPal-login2-page');
             },
             function onWaitTimeout() {
@@ -186,8 +175,8 @@ casper.test.begin('Test for buy', function suite(test) {
         );
 
         casper.then(function() {
-            //casper.wait(10000);
-            //fs.write('casperlogs/logfile.html', casper.getHTML(), 'w');
+            // casper.wait(10000);
+            // fs.write('casperlogs/logfile.html', casper.getHTML(), 'w');
             casper.fill('form#parentForm', {
                 'login_password': userConfig.PayPalPassw
             });
@@ -196,8 +185,8 @@ casper.test.begin('Test for buy', function suite(test) {
         });
 
         casper.then(function() {
-            casper.echo('\n' + 'PayPal-Logined2-Url: ' + casper.getCurrentUrl(), 'TRACE');
-            //casper.wait(60000);
+            // casper.echo('\n' + 'PayPal-Logined2-Url: ' + casper.getCurrentUrl(), 'TRACE');
+            // casper.wait(60000);
             casper.myCapture('payPal-submitLogin_click-page');
         });
     }
@@ -214,7 +203,7 @@ casper.test.begin('Test for buy', function suite(test) {
     );
 
     casper.then(function() {
-        casper.wait(5000);
+        // casper.wait(5000);
         // casper.echo('\n' + 'PayPal-Confirmation-Url: ' + casper.getCurrentUrl(), 'TRACE');
         test.assertExists('#confirmButtonTop');
         casper.click('#confirmButtonTop');
