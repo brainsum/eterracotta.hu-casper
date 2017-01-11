@@ -1,7 +1,18 @@
 var fs = require('fs');
 
 casper.test.begin('Test for buy', function suite(test) {
+    /*casper.start();
+    //casper.clear();
+    phantom.clearCookies();
+    //phantom.page.clearMemoryCache();
+    casper.thenOpen(siteConfig.siteURL, function() {
+        test.assertExists('#block-terracotta-terracotta-bestsellers');
+        casper.myCapture('front-page');
+    });*/
+
     casper.start(siteConfig.siteURL, function() {
+        //phantom.clearCookies();
+        //casper.clear();
         test.assertExists('#block-terracotta-terracotta-bestsellers');
         casper.myCapture('front-page');
     });
@@ -141,56 +152,56 @@ casper.test.begin('Test for buy', function suite(test) {
         casper.clickLabel('Log In', 'button');
     });
 
-    // BEGIN Step 1
-    /*
+    var isFirst = 0;
     casper.waitForSelector('#loadLogin',
         function then() {
             casper.echo('\n' + 'PayPal-Login-Url: ' + casper.getCurrentUrl(), 'TRACE');
+            casper.myCapture('first-payPal-btnLogin_click-page');
+            isFirst = 1;
+        },
+        function onWaitTimeout() {
+            //casper.echo("I can't take my screenshot - timeout.", 'TRACE').exit();
             casper.myCapture('payPal-btnLogin_click-page');
         },
-        function onWaitTimeout() {
-            casper.echo("I can't take my screenshot - timeout.", 'TRACE').exit();
-        },
         30000
     );
 
-    casper.then(function() {
-        //fs.write('casperlogs/logfile.html', casper.getHTML(), 'w');
-        test.assertExists('#loadLogin');
-        casper.click('#loadLogin');
-    });
-    
-    casper.waitForSelector('#submitLogin',
-        function then() {
-            casper.echo('\n' + 'PayPal-Login2-Url: ' + casper.getCurrentUrl(), 'TRACE');
-            //casper.wait(1000);
-            casper.myCapture('payPal-login2-page');
-        },
-        function onWaitTimeout() {
-            casper.echo("I can't take my screenshot - timeout.", 'TRACE').exit();
-        },
-        30000
-    );
-
-    casper.then(function() {
-        //casper.wait(10000);
-        //fs.write('casperlogs/logfile.html', casper.getHTML(), 'w');
-        casper.fill('form#parentForm', {
-            'login_password': userConfig.PayPalPassw
+    if (isFirst === 1) {
+        casper.then(function() {
+            //fs.write('casperlogs/logfile.html', casper.getHTML(), 'w');
+            test.assertExists('#loadLogin');
+            casper.click('#loadLogin');
         });
-        casper.myCapture('payPal-submitLogin_filledpw_click-page');
-        casper.click('#submitLogin');
-    });
+        
+        casper.waitForSelector('#submitLogin',
+            function then() {
+                casper.echo('\n' + 'PayPal-Login2-Url: ' + casper.getCurrentUrl(), 'TRACE');
+                //casper.wait(1000);
+                casper.myCapture('payPal-login2-page');
+            },
+            function onWaitTimeout() {
+                casper.echo("I can't take my screenshot - timeout.", 'TRACE').exit();
+            },
+            30000
+        );
 
-    casper.then(function() {
-        casper.echo('\n' + 'PayPal-Logined2-Url: ' + casper.getCurrentUrl(), 'TRACE');
-        //casper.wait(60000);
-        casper.myCapture('payPal-submitLogin_click-page');
-    });
-    */
-    // END Step 1
+        casper.then(function() {
+            //casper.wait(10000);
+            //fs.write('casperlogs/logfile.html', casper.getHTML(), 'w');
+            casper.fill('form#parentForm', {
+                'login_password': userConfig.PayPalPassw
+            });
+            casper.myCapture('payPal-submitLogin_filledpw_click-page');
+            casper.click('#submitLogin');
+        });
 
-    // BEGIN Step 2
+        casper.then(function() {
+            casper.echo('\n' + 'PayPal-Logined2-Url: ' + casper.getCurrentUrl(), 'TRACE');
+            //casper.wait(60000);
+            casper.myCapture('payPal-submitLogin_click-page');
+        });
+    }
+
     casper.waitForSelector('#confirmButtonTop',
         function then() {
             // casper.echo('\n' + 'PayPal-Logined-Url: ' + casper.getCurrentUrl(), 'TRACE');
@@ -203,13 +214,12 @@ casper.test.begin('Test for buy', function suite(test) {
     );
 
     casper.then(function() {
-        casper.wait(1000);
+        casper.wait(5000);
         // casper.echo('\n' + 'PayPal-Confirmation-Url: ' + casper.getCurrentUrl(), 'TRACE');
         test.assertExists('#confirmButtonTop');
         casper.click('#confirmButtonTop');
         casper.myCapture('payPal-confirmButtonTop_click-page');
     });
-    // END Step 2
 
     casper.waitForSelector('.checkout-completion-message',
         function then() {
@@ -222,8 +232,11 @@ casper.test.begin('Test for buy', function suite(test) {
         },
         30000
     );
-
+    
     casper.run(function() {
+        casper.clear();
+        phantom.clearCookies();
+        phantom.page.clearMemoryCache();
         casper.test.done();
     });
 
