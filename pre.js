@@ -1,4 +1,5 @@
 var siteConfig = require('../configs/site.config.js');
+var siteUserConfig = require('../configs/site-user.config.js');
 var userConfig = require('../configs/user.config.js');
 var casperSettings = require('../configs/casper-settings.js');
 

@@ -2,3 +2,4 @@ screenshots/
 screenshots_backup/
 casperlogs/
 configs/user.config.js
+configs/site-user.config.js
