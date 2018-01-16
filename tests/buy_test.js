@@ -1,111 +1,323 @@
+var HomePageFile = require('../pages/HomePage.js');
+var homePage = new HomePageFile();
+
+var LoginPageFile = require('../pages/LoginPage.js');
+var loginPage = new LoginPageFile();
+
+var FlowerStandsPageFile = require('../pages/FlowerStandsPage.js');
+var flowerStandsPage = new FlowerStandsPageFile();
+
+var ClayPotPageFile = require('../pages/ClayPotPage.js');
+var clayPotPage = new ClayPotPageFile();
+
+var CartPageFile = require('../pages/CartPage.js');
+var cartPage = new CartPageFile();
+
+var CheckoutPageFile = require('../pages/CheckoutPage.js');
+var checkoutPage = new CheckoutPageFile();
+
+var CheckoutReviewPageFile = require('../pages/CheckoutReviewPage.js');
+var checkoutReviewPage = new CheckoutReviewPageFile();
+
+var CheckoutCompletePageFile = require('../pages/CheckoutCompletePage.js');
+var checkoutCompletePage = new CheckoutCompletePageFile();
+
+var formData = [
+        'test@yahoo.com',
+        'Test Pers',
+        'Magyarország',
+        '4000',
+        'Budapest',
+        'Szív utca',
+        '0757000999',
+        'Ez csak egy teszt rendelés!'
+    ];
+
+var now = new Date();
+
+var testUser = casper.cli.get('test_user');
+var gls_home = casper.cli.get('gls_home');
+
 casper.test.begin('Test for buy', function suite(test) {
+
     casper.start(siteConfig.siteURL, function() {
-        test.assertExists('#block-terracotta-terracotta-bestsellers');
-        casper.myCapture('front-page');
+       casper.myCapture('front-page');
     });
 
+    if (testUser == "anonym" || !testUser) {
+        casper.echo("Test with anonymous user! " + testUser);
+    }
+    else if (testUser == "auth") {
+        casper.echo("Test with authenticated user! " + testUser);
+
+        casper.thenOpen(siteConfig.loginURL, function() {
+            casper.echo('\n' + 'login-Url: ' + casper.getCurrentUrl(), 'TRACE');
+            casper.myCapture('login-page');
+        });
+
+        loginPage.checkPage();
+
+        loginPage.fillForm(siteUserConfig.userName, siteUserConfig.userPassword);
+
+        casper.then(function() {
+            casper.myCapture('filled_login-page');
+        });
+
+        loginPage.submitForm();
+
+        casper.waitForUrl(/users\/.*/,
+            function then() {
+                test.assertSelectorHasText('h1.page-header', 'Olcsóbban Kapó Partner');
+                casper.echo('\n' + 'user-Url: ' + casper.getCurrentUrl(), 'TRACE');
+                casper.myCapture('user-page');
+            },
+            function onWaitTimeout() {
+                casper.myCapture('user-page-timeout');
+                casper.echo("I can't take my screenshot - timeout.", 'TRACE').exit();
+            },
+            10000
+        );
+
+        casper.thenOpen(siteConfig.siteURL, function() {
+            casper.echo('\n' + 'homePage-Url: ' + casper.getCurrentUrl(), 'TRACE');
+            casper.myCapture('home-page-page');
+        });
+    }
+    else {
+        casper.echo("The given type of user is invalid! " + testUser);
+        casper.exit();
+    }
+
+    if (gls_home == "home" || !gls_home) {
+        casper.echo("Test with home delivery! " + gls_home);
+    }
+    else if (gls_home == "gls") {
+        casper.echo("Test with delivery to GLS Point! " + gls_home);
+    }
+    else {
+        casper.echo("The given type of delivery is invalid! " + gls_home);
+        casper.exit();
+    }
+
+    homePage.checkPage();
+
+    // homePage.selectFlowerStands();
+
+    // // redirect to the 'Virágtartók' page
+    // casper.waitForUrl(siteConfig.flowerStandsURL,
+    //     function then() {
+    //         // casper.echo('Page: ' + casper.getTitle() + ' ' + siteConfig.flowerStandsURL, 'TRACE');
+    //         test.assertExists('h1.page-header');
+    //         test.assertSelectorHasText('h1.page-header', 'Virágtartók');
+    //         casper.echo('\n' + 'flowerStands-Url: ' + casper.getCurrentUrl(), 'TRACE');
+    //         casper.myCapture('flowerStands-page');
+    //     },
+    //     function onWaitTimeout() {
+    //         casper.myCapture('flowerStands-page-timeout');
+    //         casper.echo("I can't take my screenshot - timeout.", 'TRACE').exit();
+    //     },
+    //     40000
+    // );
+
     casper.thenOpen(siteConfig.flowerStandsURL, function() {
-        // casper.echo('Page: ' + casper.getTitle() + ' ' + siteConfig.flowerStandsURL, 'TRACE');
-        // casper.echo('\n' + 'checkout-Url: ' + casper.getCurrentUrl(), 'TRACE');
-        test.assertExists('h1.page-header');
-        test.assertSelectorHasText('h1.page-header', 'Virágtartók');
+        casper.echo('\n' + 'flowerStands-Url: ' + casper.getCurrentUrl(), 'TRACE');
         casper.myCapture('flowerStands-page');
     });
 
-    casper.thenOpen(siteConfig.clayPotsURL, function() {
-        // casper.echo('Page: ' + casper.getTitle() + ' ' + siteConfig.clayPotsURL, 'TRACE');
-        test.assertExists('h1.page-title');
-        test.assertSelectorHasText('h1.page-title', 'Agyagcserép');
-        casper.myCapture('clayPots-page');
-    });
+    flowerStandsPage.checkPage();
 
-    casper.then(function() {
-        casper.clickLabel('Kosárba', 'button');
-    });
+    flowerStandsPage.selectClayPot();
 
-    casper.waitForSelector('.alert.alert-block.alert-success.messages.status', function() {
-        test.assertExists('.alert.alert-block.alert-success.messages.status');
-        test.assertTextExists('bekerült a', 'The selected item gone to the shopping cart.');
-        casper.myCapture('clayPots-addToCart-page');
-    });
+    casper.waitForUrl(siteConfig.clayPotURL,
+        function then() {
+            casper.echo('\n' + 'clayPot-Url: ' + casper.getCurrentUrl(), 'TRACE');
+            casper.myCapture('clayPot-page');
+        },
+        function onWaitTimeout() {
+            casper.myCapture('clayPot-page-timeout');
+            casper.echo("I can't take my screenshot - timeout.", 'TRACE').exit();
+        },
+        30000
+    );
+
+    clayPotPage.checkPage();
+
+    clayPotPage.addToCart();
+
+    casper.waitForSelector('.alert.alert-block.alert-success.messages.status',
+        function then () {
+            test.assertExists('.alert.alert-block.alert-success.messages.status');
+            test.assertTextExists('bekerült a', 'The selected item gone to the shopping cart.');
+            casper.myCapture('clayPot-addToCart-page');
+        },
+        function onWaitTimeout() {
+            casper.myCapture('clayPot-addToCart-page-timeout');
+            casper.echo("I can't take my screenshot - timeout.", 'TRACE').exit();
+        },
+        30000
+    );
 
     casper.waitForSelector('#cart-popup', function() {
         test.assertExists('.line-item-summary-view-cart.first');
-        casper.clickLabel('Kosár megtekintése', 'a');
+    });
+
+    clayPotPage.viewCart();
+
+    casper.waitForUrl(siteConfig.cartURL,
+        function then() {
+            casper.echo('\n' + 'cart-Url: ' + casper.getCurrentUrl(), 'TRACE');
+            casper.myCapture('cart-page');
+        },
+        function onWaitTimeout() {
+            casper.myCapture('cart-page-timeout');
+            casper.echo("I can't take my screenshot - timeout.", 'TRACE').exit();
+        },
+        30000
+    );
+
+    cartPage.checkPage();
+
+    cartPage.clickPay();
+
+    casper.waitForUrl(/checkout\/\d*/,
+        function then() {
+            casper.echo('\n' + 'checkout-Url: ' + casper.getCurrentUrl(), 'TRACE');
+            casper.myCapture('checkout-page');
+        },
+        function onWaitTimeout() {
+            casper.myCapture('checkout-Url-page-timeout');
+            casper.echo("I can't take my screenshot - timeout.", 'TRACE').exit();
+        },
+        30000
+    );
+
+    checkoutPage.checkPage();
+
+    casper.then(function() {
+        if (testUser != "auth") {
+            casper.then(function() {
+                checkoutPage.fillForm(formData);
+            });
+
+            casper.then(function() {
+                checkoutPage.fillFormCashOnDelivery();
+            });
+        }
     });
 
     casper.then(function() {
-        // casper.echo('Page: ' + casper.getTitle(), 'TRACE');
-        test.assertExists('h1.page-header');
-        test.assertSelectorHasText('h1.page-header', 'Kosár');
-        casper.myCapture('cart-page');
+        if (testUser == "auth") {
+            casper.then(function() {
+                // checkoutPage.fillFormOrderPerson(formData[1], now.getFullYear() + "." + (now.getMonth() + 1) + "." + now.getDate());
+                casper.then(function() {
+                    checkoutPage.fillFormCashOnDelivery();
+                });
+            });
+        }
     });
 
     casper.then(function() {
-        casper.clickLabel('Fizetés', 'button');
-    });
-
-    casper.waitForSelector('#edit-cart-contents', function() {
-        // casper.echo('\n' + 'checkout-Url: ' + casper.getCurrentUrl(), 'TRACE');
-        test.assertSelectorHasText('h1.page-header', 'Fizetés');
-        test.assertExists('.panel-heading');
-        test.assertSelectorHasText('.panel-title.fieldset-legend', 'Kosár tartalma');
-        casper.myCapture('checkout-page');
+        casper.myCapture('filled_delivery_for-checkout-page');
     });
 
     casper.then(function() {
-        test.assertExists('#commerce-checkout-form-checkout');
-        casper.fill('form#commerce-checkout-form-checkout', {
-            'account[login][mail]': 'test@yahoo.com',
-            'customer_profile_shipping[commerce_customer_address][und][0][name_line]': 'Test Pers',
-            'customer_profile_shipping[commerce_customer_address][und][0][country]': 'Románia',
-            'customer_profile_shipping[commerce_customer_address][und][0][postal_code]': '4000',
-            'customer_profile_shipping[commerce_customer_address][und][0][locality]': 'Sepsiszentgyörgy',
-            'customer_profile_shipping[commerce_customer_address][und][0][thoroughfare]': 'Grigore Bălan',
-            'customer_profile_shipping[commerce_customer_address][und][0][phone_number]': '0757000999',
-            'commerce_fieldgroup_pane__group_remark[field_remark][und][0][value]': 'Ez csak egy teszt rendelés!',
-            'commerce_payment[payment_method]': 'commerce_cod|commerce_payment_commerce_cod'
-        });
-        casper.wait(5000);
+        checkoutPage.fillFormRemark(formData[7]);
+    });
+
+    casper.then(function() {
+        casper.myCapture('filled_remark_for-checkout-page');
+    });
+
+    casper.then(function() {
+        casper.wait(20000);
+        casper.myCapture('filled_data_for-checkout-page');
+    });
+
+    casper.then(function() {
+        if (gls_home == "gls") {
+            casper.then(function() {
+                if (testUser == "anonym") {
+                    checkoutPage.fillGlsPoint('gls_pont');
+                }
+                else if (testUser == "auth") {
+                    checkoutPage.fillGlsPoint('gls_pont_5000_10000');
+                }
+            });
+
+            casper.then(function() {
+                casper.wait(10000);
+                casper.myCapture('selected-GLS_Point-page');
+            });
+
+            casper.waitForText('To-Ma Tour Kft',
+                function then() {
+                    casper.myCapture('checkout-page-GLS-page');
+                    // fs.write('casperlogs/logfile.html', casper.getHTML(), 'w');
+                    test.assertExists('#psitems-canvas > div');
+                    casper.click('#psitems-canvas > div');
+                    casper.myCapture('filled-checkout-page');
+                },
+                function onWaitTimeout() {
+                    casper.myCapture('checkout-page-GLS-page-timeout');
+                    casper.echo("I can't take my screenshot - timeout.", 'TRACE').exit();
+                },
+                90000
+            );
+        }
+    });
+
+    casper.then(function() {
+        checkoutPage.fillFormCashOnDelivery();
+    });
+
+    casper.then(function() {
+        casper.wait(20000);
         casper.myCapture('filled-checkout-page');
     });
 
     casper.then(function() {
-        casper.clickLabel('Folytatás a következő lépéssel', 'button');
-        casper.options.timeout = 30000;
-        casper.options.waitTimeout = 30000;
+        checkoutPage.clickVerifyOrder();
     });
 
-    casper.waitForSelector('.checkout-help',
+    casper.waitForUrl(/checkout\/\d*\/review/,
         function then() {
-            // casper.echo('\n' + 'checkout-review Url: ' + casper.getCurrentUrl(), 'TRACE');
-            test.assertSelectorHasText('h1.page-header', 'Rendelés áttekintése');
-            test.assertSelectorHasText('.checkout-help', 'A vásárlás befejezése előtt kérjük ellenőrizze rendelését!');
+            casper.echo('\n' + 'checkout-review-Url: ' + casper.getCurrentUrl(), 'TRACE');
             casper.myCapture('checkout-review-page');
-        }, 
+        },
         function onWaitTimeout() {
+            casper.myCapture('checkout-review-page-timeout');
+            casper.echo('\n' + 'checkout-review-Url: ' + casper.getCurrentUrl(), 'TRACE');
             casper.echo("I can't take my screenshot - timeout.", 'TRACE').exit();
         },
         30000
     );
 
     casper.then(function() {
-        casper.clickLabel('Folytatás a következő lépéssel', 'button');
+        checkoutReviewPage.fillTermsConditions();
     });
 
-    casper.waitForSelector('.checkout-completion-message',
+    casper.then(function() {
+        checkoutReviewPage.clickPay();
+    });
+
+    casper.waitForUrl(/checkout\/\d*\/complete/,
         function then() {
-            //casper.echo('\n' + 'checkout-complete Url: ' + casper.getCurrentUrl(), 'TRACE');
-            test.assertSelectorHasText('h1.page-header', 'A rendelési eljárás befejeződött');
+            casper.echo('\n' + 'checkout-complete-Url: ' + casper.getCurrentUrl(), 'TRACE');
             casper.myCapture('checkout-complete-page');
-            },
+        },
         function onWaitTimeout() {
+            casper.myCapture('checkout-complete-page-timeout');
             casper.echo("I can't take my screenshot - timeout.", 'TRACE').exit();
         },
         30000
     );
 
+    checkoutCompletePage.checkPage();
+
     casper.run(function() {
+        casper.clear();
+        phantom.clearCookies();
+        phantom.page.clearMemoryCache();
         casper.test.done();
     });
 
