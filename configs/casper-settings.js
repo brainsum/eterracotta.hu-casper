@@ -9,11 +9,11 @@ var addZerosToNumber = function(currId) {
     }
 
     if (currId < 100) {
-        retVal += '0'; 
+        retVal += '0';
     }
 
-    if (currId < 10) { 
-        retVal += '0'; 
+    if (currId < 10) {
+        retVal += '0';
     }
 
     return (retVal + currId);
