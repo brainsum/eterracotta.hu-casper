@@ -19,6 +19,11 @@ var addZerosToNumber = function(currId) {
     return (retVal + currId);
 };
 
+casper.options.viewportSize = {
+    width: 1366,
+    height: 768
+};
+
 exports.InitializeCustomFunctions = function() {
     casper.myCapture = function myCapture(name, isError) {
         isError = (typeof isError !== 'undefined') ? isError : false;
