@@ -152,18 +152,6 @@ casper.test.begin('Test for buy', function suite(test) {
 
     checkoutReviewPage.clickPay();
 
-    // casper.waitForUrl(/.*www.sandbox.paypal.com\/.*\/checkout\/signup/,
-    //     function then() {
-    //         casper.echo('\n' + 'payPal-checkout-signup-Url: ' + casper.getCurrentUrl(), 'TRACE');
-    //         casper.myCapture('payPal-checkout-signup-page');
-    //     },
-    //     function onWaitTimeout() {
-    //         casper.myCapture('payPal-checkout-signup-page-timeout');
-    //         casper.echo("I can't take my screenshot - timeout.", 'TRACE').exit();
-    //     },
-    //     30000
-    // );
-
     casper.waitForSelector('a.btn.full.ng-binding',
         function then() {
             casper.echo('\n' + 'payPal-checkout-signup-Url: ' + casper.getCurrentUrl(), 'TRACE');
@@ -180,20 +168,20 @@ casper.test.begin('Test for buy', function suite(test) {
 
     payPalPage.clickLogIn();
 
-    casper.waitForSelector('#injectedUnifiedLogin',
+    casper.waitForSelector('#emailSubTagLine',
         function then() {
-            casper.echo('\n' + 'payPal-Login-Url: ' + casper.getCurrentUrl(), 'TRACE');
-            casper.myCapture('payPal-login-page');
+            casper.echo('\n' + 'payPal-Login-Url-email: ' + casper.getCurrentUrl(), 'TRACE');
+            casper.myCapture('payPal-login-page-email');
             casper.wait(5000);
         },
         function onWaitTimeout() {
-            casper.myCapture('payPal-login-page-timeout');
+            casper.myCapture('payPal-login-page-email-timeout');
             casper.echo("I can't take my screenshot - timeout.", 'TRACE').exit();
         },
         30000
     );
 
-    payPalPage.checkLoginPage();
+    payPalPage.checkLoginEmailPage();
 
     // @NOTE: To use paypal sandbox, edit this:
     // http://localhost:8000/admin/commerce/config/payment-methods/manage/commerce_payment_paypal_ec/edit/3
@@ -205,21 +193,52 @@ casper.test.begin('Test for buy', function suite(test) {
     //     3, Paste the credentials into the inputs on terracotta
     // @NOTE: Fill with buyer ("personal") sandbox account
 
-    casper.withFrame('injectedUl', function(){
-        // casper.myCapture('paypal-login-iframe-page');
-        payPalPage.fillLoginForm(userConfig.PayPalEmail, userConfig.PayPalPassw);
-        casper.myCapture('payPal-filled-login-iframe-page');
-        payPalPage.clickLoginPageLogIn();
+    casper.then(function(){
+        casper.myCapture('paypal-login-email-page');
+        payPalPage.fillLoginEmailForm(userConfig.PayPalEmail);
+    });
+
+    casper.then(function(){
+        casper.wait(5000);
+        casper.myCapture('payPal-filled-login-email-page');
+        payPalPage.clickLoginEmailPageContinue();
     });
 
     casper.then(function() {
-        casper.myCapture('paypal-filled-login-page');
+        casper.myCapture('paypal-filled-login-email');
+    });
+
+    casper.waitForSelector('#login_passworddiv',
+        function then() {
+            casper.echo('\n' + 'payPal-Login-Url-passw: ' + casper.getCurrentUrl(), 'TRACE');
+            casper.myCapture('payPal-login-page-passw');
+            casper.wait(5000);
+        },
+        function onWaitTimeout() {
+            casper.myCapture('payPal-login-page-passw-timeout');
+            casper.echo("I can't take my screenshot - timeout.", 'TRACE').exit();
+        },
+        30000
+    );
+
+    payPalPage.checkLoginPasswPage();
+
+    casper.then(function(){
+        casper.myCapture('paypal-login-passw-page');
+        payPalPage.fillLoginPasswForm(userConfig.PayPalPassw);
+    });
+
+    casper.then(function(){
+        casper.wait(5000);
+        casper.myCapture('payPal-filled-login-passw-page');
+        payPalPage.clickLoginPageLogIn();
     });
 
     casper.waitForSelector('#confirmButtonTop',
         function then() {
             casper.echo('\n' + 'PayPal-Logined-Url: ' + casper.getCurrentUrl(), 'TRACE');
-            // casper.myCapture('payPal-checkout-review-page');
+            casper.myCapture('payPal-checkout-review-page');
+            casper.wait(5000);
         },
         function onWaitTimeout() {
             casper.myCapture('payPal-checkout-review-page-timeout');
@@ -229,10 +248,13 @@ casper.test.begin('Test for buy', function suite(test) {
     );
 
     casper.then(function() {
-        casper.myCapture('payPal-checkout-review-page');
+        casper.wait(5000);
+        casper.myCapture('payPal-checkout-review-page1');
     });
 
-    payPalPage.clickContinue();
+    casper.then(function() {
+        payPalPage.clickContinue();
+    });
 
     casper.waitForUrl(/checkout\/\d*\/complete/,
         function then() {

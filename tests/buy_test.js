@@ -240,7 +240,7 @@ casper.test.begin('Test for buy', function suite(test) {
                     checkoutPage.fillGlsPoint('gls_pont');
                 }
                 else if (testUser == "auth") {
-                    checkoutPage.fillGlsPoint('gls_pont_5000_10000');
+                    checkoutPage.fillGlsPoint('gls_pont');
                 }
             });
 
@@ -249,7 +249,7 @@ casper.test.begin('Test for buy', function suite(test) {
                 casper.myCapture('selected-GLS_Point-page');
             });
 
-            casper.waitForText('To-Ma Tour Kft',
+            casper.waitForText('Csillagvirág Gyógynövénybolt',
                 function then() {
                     casper.myCapture('checkout-page-GLS-page');
                     // fs.write('casperlogs/logfile.html', casper.getHTML(), 'w');

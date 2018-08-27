@@ -9,7 +9,19 @@ function PayPalPage() {
 
     this.clickLogIn = function () {
         casper.then(function () {
-            this.clickLabel('Log In', 'a');
+            this.clickLabel('Bejelentkezés', 'a');
+        });
+    };
+
+    this.checkLoginEmailPage = function () {
+        casper.then(function () {
+            casper.test.assertExists('#email');
+        });
+    };
+
+    this.checkLoginPasswPage = function () {
+        casper.then(function () {
+            casper.test.assertExists('#password');
         });
     };
 
@@ -20,6 +32,22 @@ function PayPalPage() {
         });
     };
 
+    this.fillLoginEmailForm = function (name) {
+        casper.then(function () {
+            casper.fill('form.proceed.maskable', {
+                'login_email': name //userConfig.PayPalEmail
+            });
+        });
+    }
+
+    this.fillLoginPasswForm = function (passw) {
+        casper.then(function () {
+            casper.fill('form.proceed.maskable', {
+                'login_password': passw //userConfig.PayPalPassw
+            });
+        });
+    }
+
     this.fillLoginForm = function (name, passw) {
         casper.then(function () {
             casper.fill('form.proceed', {
@@ -29,9 +57,15 @@ function PayPalPage() {
         });
     }
 
+    this.clickLoginEmailPageContinue = function () {
+        casper.then(function () {
+            this.clickLabel('Tovább', 'button');
+        });
+    }
+
     this.clickLoginPageLogIn = function () {
         casper.then(function () {
-            this.clickLabel('Log In', 'button');
+            this.clickLabel('Bejelentkezés', 'button');
         });
     }
 
